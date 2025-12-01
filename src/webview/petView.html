@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src {{cspSource}} 'unsafe-inline'; img-src {{cspSource}} data:; script-src {{cspSource}} 'nonce-{{nonce}}';">
+    <title>Spooky Pet</title>
+    <link rel="stylesheet" href="{{styleUri}}">
+</head>
+<body>
+    <div id="pet-container">
+        <canvas id="pet-canvas" width="128" height="128"></canvas>
+        <div id="processing-indicator" class="hidden">
+            <div class="spinner"></div>
+        </div>
+    </div>
+    
+    <div id="speech-bubble" class="hidden">
+        <div class="speech-bubble-content"></div>
+        <div class="speech-bubble-tail"></div>
+    </div>
+
+    <script nonce="{{nonce}}" src="{{scriptUri}}"></script>
+</body>
+</html>
