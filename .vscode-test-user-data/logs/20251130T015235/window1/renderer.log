@@ -1,0 +1,6 @@
+2025-11-30 01:52:36.088 [info] ChatSessionStore: Migrating 0 chat sessions from storage service to file system
+2025-11-30 01:52:36.204 [info] Started local extension host with pid 24792.
+2025-11-30 01:52:36.213 [info] Loading development extension at c:\Users\Pache\Documents\EmiProyectos\costume-hackathon\halloween-phantom-pet
+2025-11-30 01:52:36.428 [info] MCP Registry configured: https://api.mcp.github.com
+2025-11-30 01:52:36.516 [info] Settings Sync: Account status changed from uninitialized to unavailable
+2025-11-30 01:52:36.963 [info] [92m [0m[32m %d passing[0m[90m (%s)[0m 0 0ms

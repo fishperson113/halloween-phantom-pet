@@ -1,0 +1,9 @@
+2025-11-30 01:52:00.701 [info] [main] Log level: Info
+2025-11-30 01:52:00.701 [info] [main] Validating found git in: "C:\Program Files\Git\cmd\git.exe"
+2025-11-30 01:52:00.701 [info] [main] Using git "2.48.1.windows.1" from "C:\Program Files\Git\cmd\git.exe"
+2025-11-30 01:52:00.701 [info] [Model][doInitialScan] Initial repository scan started
+2025-11-30 01:52:00.734 [info] > git rev-parse --show-toplevel [37ms]
+2025-11-30 01:52:00.801 [info] > git rev-parse --git-dir --git-common-dir --show-superproject-working-tree [64ms]
+2025-11-30 01:52:00.806 [info] [Model][openRepository] Opened repository (path): c:\Users\Pache\Documents\EmiProyectos\costume-hackathon\halloween-phantom-pet
+2025-11-30 01:52:00.807 [info] [Model][openRepository] Opened repository (real path): c:\Users\Pache\Documents\EmiProyectos\costume-hackathon\halloween-phantom-pet
+2025-11-30 01:52:00.807 [info] [Model][openRepository] Opened repository (kind): repository

@@ -1,0 +1,5 @@
+2025-11-30 01:52:36.829 [info] [main] Log level: Info
+2025-11-30 01:52:36.829 [info] [main] Validating found git in: "C:\Program Files\Git\cmd\git.exe"
+2025-11-30 01:52:36.829 [info] [main] Using git "2.48.1.windows.1" from "C:\Program Files\Git\cmd\git.exe"
+2025-11-30 01:52:36.829 [info] [Model][doInitialScan] Initial repository scan started
+2025-11-30 01:52:36.861 [info] > git rev-parse --show-toplevel [38ms]

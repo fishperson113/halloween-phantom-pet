@@ -4,37 +4,129 @@
   "description": "This is the part of VSCode ThemePackage",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.106.1"
+    "vscode": "^1.103.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "halloween-phantom-pet.helloWorld",
-        "title": "Hello World"
+        "command": "spookyPets.setApiKey",
+        "title": "Spooky Pets: Set API Key"
+      },
+      {
+        "command": "spookyPets.clearApiKey",
+        "title": "Spooky Pets: Clear API Key"
+      },
+      {
+        "command": "spookyPets.selectPet",
+        "title": "Spooky Pets: Select Pet"
+      },
+      {
+        "command": "spookyPets.triggerCommentary",
+        "title": "Spooky Pets: Trigger Commentary Now"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "spooky-pets",
+          "title": "Spooky Pets",
+          "icon": "resources/ghost-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "spooky-pets": [
+        {
+          "type": "webview",
+          "id": "spookyPets.petView",
+          "name": "Pet",
+          "icon": "resources/ghost-icon.svg"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Spooky Code Pets",
+      "properties": {
+        "spookyPets.commentaryFrequency": {
+          "type": "number",
+          "default": 200,
+          "minimum": 0,
+          "description": "Characters written before automatic commentary (0 to disable)"
+        },
+        "spookyPets.selectedPet": {
+          "type": "string",
+          "enum": [
+            "pumpkin",
+            "skeleton",
+            "ghost"
+          ],
+          "default": "pumpkin",
+          "description": "Currently active pet"
+        },
+        "spookyPets.apiEndpoint": {
+          "type": "string",
+          "default": "https://api.openai.com/v1/chat/completions",
+          "description": "OpenAI-compatible API endpoint"
+        },
+        "spookyPets.model": {
+          "type": "string",
+          "default": "gpt-3.5-turbo",
+          "description": "LLM model name"
+        },
+        "spookyPets.maxTokens": {
+          "type": "number",
+          "default": 75,
+          "minimum": 20,
+          "maximum": 200,
+          "description": "Maximum tokens for commentary responses"
+        },
+        "spookyPets.contextLines": {
+          "type": "number",
+          "default": 15,
+          "minimum": 5,
+          "maximum": 50,
+          "description": "Lines of code to include in context"
+        },
+        "spookyPets.customPrompts": {
+          "type": "object",
+          "default": {},
+          "description": "Custom personality prompts for each pet"
+        }
+      }
+    }
   },
   "scripts": {
-    "vscode:prepublish": "yarn run compile",
-    "compile": "tsc -p ./",
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./ && npm run copy-webview",
+    "copy-webview": "node -e \"require('fs').cpSync('src/webview', 'out/webview', {recursive: true})\"",
     "watch": "tsc -watch -p ./",
-    "pretest": "yarn run compile && yarn run lint",
+    "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
     "test": "vscode-test"
   },
+  "dependencies": {
+    "node-fetch": "^3.3.0",
+    "zod": "^4.1.13"
+  },
   "devDependencies": {
-    "@types/vscode": "^1.106.1",
+    "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
-    "typescript-eslint": "^8.46.3",
-    "eslint": "^9.39.1",
-    "typescript": "^5.9.3",
+    "@types/vscode": "^1.103.0",
     "@vscode/test-cli": "^0.0.12",
-    "@vscode/test-electron": "^2.5.2"
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.39.1",
+    "fast-check": "^3.15.0",
+    "glob": "^13.0.0",
+    "mocha": "^11.7.5",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.3"
   }
 }
