@@ -434,3 +434,112 @@
 
 - [ ] 14. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
+
+
+- [x] 15. Implement expressive reactions feature
+
+
+
+
+
+  - [x] 15.1 Add Zod dependency and schema validation
+
+
+    - Install zod package for JSON schema validation
+    - Create schema for structured LLM responses
+    - Add validation helper functions
+    - _Requirements: 9.1, 9.7_
+
+  - [x] 15.2 Update sprite configurations with expression frames
+
+
+    - Add happyExpressionFrames array to PetConfig interface
+    - Add neutralExpressionFrames array to PetConfig interface
+    - Add concernedExpressionFrames array to PetConfig interface
+    - Update sprite configs for pumpkin, skeleton, and ghost
+    - Document expression frame requirements in SPRITE_GUIDE.md
+    - _Requirements: 9.2, 9.3, 9.4_
+
+  - [x] 15.3 Update LLM Service to request structured responses
+
+
+    - Modify system prompts to request JSON format
+    - Add expression guidelines to prompts
+    - Implement parseStructuredResponse function with Zod validation
+    - Add fallback logic for invalid responses
+    - Update generateCommentary to return StructuredCommentaryResponse
+    - _Requirements: 9.1, 9.7_
+
+  - [x] 15.4 Update PetPanelProvider for expression support
+
+
+    - Add showSpeechBubbleWithExpression method
+    - Update message passing to include expression data
+    - Modify CommentaryScheduler to use new method
+    - _Requirements: 9.2, 9.3, 9.4_
+
+  - [x] 15.5 Implement expression animations in webview
+
+
+    - Add isShowingExpression state flag
+    - Add currentExpression state variable
+    - Implement showSpeechBubbleWithExpression method
+    - Update hideSpeechBubble to resume normal behavior
+    - Modify animate() to pause movement during expressions
+    - Add expression animation frame sequences to getCurrentFrameSequence
+    - _Requirements: 9.5, 9.6_
+
+  - [x] 15.6 Update personality prompts with expression guidance
+
+
+    - Add expression selection guidelines to each personality
+    - Provide examples of when to use each expression
+    - Ensure prompts request JSON format
+    - _Requirements: 9.1, 9.2, 9.3, 9.4_
+
+  - [ ]* 15.7 Write property test for structured response parsing
+    - **Property 25: Structured response parsing**
+    - **Validates: Requirements 9.1, 9.7**
+
+  - [ ]* 15.8 Write property test for expression animation mapping
+    - **Property 26: Expression animation mapping**
+    - **Validates: Requirements 9.2, 9.3, 9.4**
+
+  - [ ]* 15.9 Write property test for movement pause during commentary
+    - **Property 27: Movement pause during commentary**
+    - **Validates: Requirements 9.5**
+
+  - [ ]* 15.10 Write property test for behavior resumption
+    - **Property 28: Behavior resumption after commentary**
+    - **Validates: Requirements 9.6**
+
+  - [ ]* 15.11 Write unit tests for expression feature
+    - Test Zod schema validation with valid and invalid inputs
+    - Test fallback behavior for malformed responses
+    - Test expression animation state transitions
+    - Test movement pause and resume logic
+    - _Requirements: 9.1, 9.5, 9.6, 9.7_
+
+- [ ] 16. Create or update sprite sheets with expression frames
+  - [ ] 16.1 Design expression frames for each pet
+    - Create 2-3 frame happy expression for pumpkin
+    - Create 2-3 frame neutral expression for pumpkin
+    - Create 2-3 frame concerned expression for pumpkin
+    - Create 2-3 frame happy expression for skeleton
+    - Create 2-3 frame neutral expression for skeleton
+    - Create 2-3 frame concerned expression for skeleton
+    - Create 2-3 frame happy expression for ghost
+    - Create 2-3 frame neutral expression for ghost
+    - Create 2-3 frame concerned expression for ghost
+    - _Requirements: 9.2, 9.3, 9.4_
+
+  - [ ] 16.2 Update sprite sheet files
+    - Add expression frames to pumpkin sprite sheet
+    - Add expression frames to skeleton sprite sheet
+    - Add expression frames to ghost sprite sheet
+    - Update sprite configurations with frame indices
+    - Test sprite loading and rendering
+    - _Requirements: 9.2, 9.3, 9.4_
+
+- [ ] 17. Final checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.

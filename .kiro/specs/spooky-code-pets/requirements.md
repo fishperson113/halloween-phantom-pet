@@ -15,6 +15,9 @@ The Spooky Code Pets extension provides an interactive coding companion experien
 - **Code Context**: The portion of code currently being edited by the user
 - **Interaction Animation**: A special animation triggered when the user clicks on a pet
 - **Commentary Frequency**: User-configurable setting controlling how often pets provide code commentary
+- **Expression Animation**: A 2-3 frame animation sequence showing the Pet's emotional reaction (happy, neutral, or concerned)
+- **Structured Response**: A JSON-formatted LLM response containing both commentary text and expression metadata
+- **Expression Indicator**: A field in the structured response specifying which expression animation to display (happy, neutral, or concerned)
 
 ## Requirements
 
@@ -113,3 +116,17 @@ The Spooky Code Pets extension provides an interactive coding companion experien
 3. WHEN network connectivity is unavailable, THE Extension SHALL queue commentary requests and retry when connectivity is restored
 4. WHEN Sprite Map files are missing or corrupted, THE Extension SHALL display a fallback visual representation
 5. WHEN an unexpected error occurs, THE Extension SHALL log diagnostic information for troubleshooting
+
+### Requirement 9
+
+**User Story:** As a developer, I want pets to react expressively to my code quality, so that their feedback feels more engaging and emotionally resonant.
+
+#### Acceptance Criteria
+
+1. WHEN the LLM generates commentary, THE Extension SHALL receive a structured response containing both the commentary text and an expression indicator
+2. WHEN the LLM evaluates code positively, THE Extension SHALL display the Pet with a happy expression animation
+3. WHEN the LLM evaluates code neutrally, THE Extension SHALL display the Pet with a neutral expression animation
+4. WHEN the LLM evaluates code with concerns, THE Extension SHALL display the Pet with a concerned expression animation
+5. WHEN a Pet displays commentary, THE Extension SHALL pause the Pet's movement animation and show the expression animation
+6. WHEN the Speech Bubble is dismissed or hidden, THE Extension SHALL return the Pet to its normal idle and movement behavior
+7. THE Extension SHALL validate the LLM response structure and use a default neutral expression if the response format is invalid

@@ -18,6 +18,9 @@ export const SPRITE_CONFIGS: Record<PetType, PetConfig> = {
     walkLeftFrames: [4, 5, 6, 7],
     walkRightFrames: [8, 9, 10, 11],
     interactionFrames: [12, 13, 14, 15],
+    happyExpressionFrames: [16, 17, 18],
+    neutralExpressionFrames: [20, 21, 22],
+    concernedExpressionFrames: [24, 25, 26],
     frameDuration: 150
   },
   [PetType.Skeleton]: {
@@ -29,6 +32,9 @@ export const SPRITE_CONFIGS: Record<PetType, PetConfig> = {
     walkLeftFrames: [4, 5, 6, 7],
     walkRightFrames: [8, 9, 10, 11],
     interactionFrames: [12, 13, 14, 15],
+    happyExpressionFrames: [16, 17, 18],
+    neutralExpressionFrames: [20, 21, 22],
+    concernedExpressionFrames: [24, 25, 26],
     frameDuration: 150
   },
   [PetType.Ghost]: {
@@ -40,6 +46,9 @@ export const SPRITE_CONFIGS: Record<PetType, PetConfig> = {
     walkLeftFrames: [4, 5, 6, 7],
     walkRightFrames: [8, 9, 10, 11],
     interactionFrames: [12, 13, 14, 15],
+    happyExpressionFrames: [16, 17, 18],
+    neutralExpressionFrames: [20, 21, 22],
+    concernedExpressionFrames: [24, 25, 26],
     frameDuration: 150
   }
 };

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { CodeContext } from '../models/CodeContext.js';
 import { ConfigurationManager } from './ConfigurationManager.js';
+import { StructuredCommentaryResponse, parseStructuredResponse } from '../models/index.js';
 
 /**
  * Interface for OpenAI-compatible API request
@@ -29,7 +30,7 @@ export interface LLMResponse {
 interface RetryQueueItem {
   codeContext: CodeContext;
   personality: string;
-  resolve: (value: string) => void;
+  resolve: (value: StructuredCommentaryResponse) => void;
   reject: (reason: Error) => void;
   retryCount: number;
 }
@@ -58,12 +59,17 @@ export class LLMService {
     const model = this.configManager.getModel();
     const maxTokens = this.configManager.getMaxTokens();
 
+    // Enhance personality prompt with JSON format requirement
+    const enhancedPersonality = `${personality}
+
+CRITICAL: Always respond with valid JSON containing both "commentary" and "expression" fields. Never respond with plain text.`;
+
     return {
       model,
       messages: [
         {
           role: 'system',
-          content: personality
+          content: enhancedPersonality
         },
         {
           role: 'user',
@@ -79,10 +85,10 @@ export class LLMService {
    * Generates commentary for the given code context using the LLM
    * @param codeContext The code context to comment on
    * @param personality The personality prompt to use
-   * @returns The generated commentary text
+   * @returns The structured commentary response with text and expression
    * @throws Error if API key is missing, API call fails, or response is invalid
    */
-  async generateCommentary(codeContext: CodeContext, personality: string): Promise<string> {
+  async generateCommentary(codeContext: CodeContext, personality: string): Promise<StructuredCommentaryResponse> {
     // Retrieve API key from secure storage
     const apiKey = await this.configManager.getApiKey();
     if (!apiKey) {
@@ -109,7 +115,8 @@ export class LLMService {
     const request = this.buildRequest(codeContext, personality);
 
     try {
-      return await this.makeApiRequest(apiKey, endpoint, request);
+      const rawResponse = await this.makeApiRequest(apiKey, endpoint, request);
+      return parseStructuredResponse(rawResponse);
     } catch (error) {
       if (error instanceof Error) {
         // Log the error for troubleshooting
@@ -218,7 +225,7 @@ export class LLMService {
    * @param personality The personality prompt
    * @returns A promise that resolves when the request succeeds
    */
-  private queueForRetry(codeContext: CodeContext, personality: string): Promise<string> {
+  private queueForRetry(codeContext: CodeContext, personality: string): Promise<StructuredCommentaryResponse> {
     return new Promise((resolve, reject) => {
       this.retryQueue.push({
         codeContext,
@@ -371,6 +378,17 @@ export class LLMService {
 ${codeContext.snippet}
 \`\`\`
 
-Please provide a brief, entertaining comment about this code (1-2 sentences max).`;
+IMPORTANT: You must respond with valid JSON in this exact format:
+{
+  "commentary": "Your 1-2 sentence comment here",
+  "expression": "happy" | "neutral" | "concerned"
+}
+
+Expression guidelines:
+- "happy": Use when code is well-written, elegant, or shows good practices
+- "neutral": Use for observations, questions, or neutral commentary
+- "concerned": Use when spotting potential bugs, code smells, or areas for improvement
+
+Provide a brief, entertaining comment about this code.`;
   }
 }

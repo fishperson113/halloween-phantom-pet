@@ -15,6 +15,9 @@ suite('Sprite Animation Unit Tests', () => {
     walkLeftFrames: [4, 5, 6, 7],
     walkRightFrames: [8, 9, 10, 11],
     interactionFrames: [12, 13, 14, 15],
+    happyExpressionFrames: [16, 17, 18],
+    neutralExpressionFrames: [19, 20, 21],
+    concernedExpressionFrames: [22, 23, 24],
     frameDuration: 150
   };
 

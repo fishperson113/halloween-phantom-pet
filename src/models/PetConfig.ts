@@ -12,5 +12,8 @@ export interface PetConfig {
   walkLeftFrames: number[];
   walkRightFrames: number[];
   interactionFrames: number[];
+  happyExpressionFrames: number[];  // 2-3 frames for happy expression
+  neutralExpressionFrames: number[];  // 2-3 frames for neutral expression
+  concernedExpressionFrames: number[];  // 2-3 frames for concerned expression
   frameDuration: number;  // milliseconds per frame
 }

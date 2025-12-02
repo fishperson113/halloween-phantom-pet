@@ -21,6 +21,10 @@
             this.behaviorTimer = null;
             this.nextBehaviorChange = 0;
             
+            // Expression animation state
+            this.isShowingExpression = false;
+            this.currentExpression = null;
+            
             // Position tracking for movement
             this.positionX = 50; // Percentage from left (0-100), starts at center
             this.movementSpeed = 0.5; // Percentage per frame (4x slower)
@@ -33,7 +37,12 @@
         setupEventListeners() {
             // Handle clicks on the pet
             this.canvas.addEventListener('click', () => {
-                this.playInteractionAnimation();
+                // If showing expression/speech bubble, dismiss it
+                if (this.isShowingExpression && !this.speechBubble.classList.contains('hidden')) {
+                    this.hideSpeechBubble();
+                } else {
+                    this.playInteractionAnimation();
+                }
                 vscode.postMessage({ type: 'petClicked' });
             });
 
@@ -66,6 +75,9 @@
                     break;
                 case 'showSpeechBubble':
                     this.showSpeechBubble(message.message);
+                    break;
+                case 'showSpeechBubbleWithExpression':
+                    this.showSpeechBubbleWithExpression(message.message, message.expression);
                     break;
                 case 'hideSpeechBubble':
                     this.hideSpeechBubble();
@@ -177,12 +189,15 @@
         animate(currentTime = performance.now()) {
             this.animationFrameId = requestAnimationFrame((time) => this.animate(time));
 
-            // Update position if walking
-            this.updatePosition();
+            // Don't change behavior or move if showing expression
+            if (!this.isShowingExpression) {
+                // Update position if walking
+                this.updatePosition();
 
-            // Check if it's time to change behavior
-            if (currentTime >= this.nextBehaviorChange) {
-                this.changeBehavior(currentTime);
+                // Check if it's time to change behavior
+                if (currentTime >= this.nextBehaviorChange) {
+                    this.changeBehavior(currentTime);
+                }
             }
 
             const deltaTime = currentTime - this.lastFrameTime;
@@ -256,6 +271,12 @@
                     return this.currentPetConfig.walkRightFrames;
                 case 'interaction':
                     return this.currentPetConfig.interactionFrames;
+                case 'happyExpression':
+                    return this.currentPetConfig.happyExpressionFrames || this.currentPetConfig.idleFrames;
+                case 'neutralExpression':
+                    return this.currentPetConfig.neutralExpressionFrames || this.currentPetConfig.idleFrames;
+                case 'concernedExpression':
+                    return this.currentPetConfig.concernedExpressionFrames || this.currentPetConfig.idleFrames;
                 case 'idle':
                 default:
                     return this.currentPetConfig.idleFrames;
@@ -347,9 +368,29 @@
             this.speechBubble.classList.remove('hidden');
         }
 
+        showSpeechBubbleWithExpression(text, expression) {
+            // Pause normal behavior
+            this.isShowingExpression = true;
+            this.currentExpression = expression;
+            
+            // Switch to expression animation
+            this.currentAnimation = `${expression}Expression`;
+            this.currentFrameIndex = 0;
+            
+            // Show speech bubble
+            this.speechBubbleContent.textContent = text;
+            this.speechBubble.classList.remove('hidden');
+        }
+
         hideSpeechBubble() {
             this.speechBubble.classList.add('hidden');
             this.speechBubbleContent.textContent = '';
+            
+            // Resume normal behavior
+            this.isShowingExpression = false;
+            this.currentExpression = null;
+            this.currentAnimation = 'idle';
+            this.currentFrameIndex = 0;
         }
 
         showProcessingIndicator() {

@@ -23,7 +23,7 @@ The extension uses sprite sheets (PNG images) to animate the pets. Each pet requ
 The sprite sheet must contain frames in the following order:
 
 ```
-Frame Layout (4x4 grid for 64x64 frames = 256x256 total image):
+Frame Layout (4x7 grid for 64x64 frames = 256x448 total image):
 
 ┌────────┬────────┬────────┬────────┐
 │ Idle 0 │ Idle 1 │ Idle 2 │ Idle 3 │  Frames 0-3: Idle animation
@@ -33,7 +33,16 @@ Frame Layout (4x4 grid for 64x64 frames = 256x256 total image):
 │Right 0 │Right 1 │Right 2 │Right 3 │  Frames 8-11: Walk right animation
 ├────────┼────────┼────────┼────────┤
 │ Int 0  │ Int 1  │ Int 2  │ Int 3  │  Frames 12-15: Interaction animation
+├────────┼────────┼────────┼────────┤
+│Happy 0 │Happy 1 │Happy 2 │ (19)   │  Frames 16-18: Happy expression (frame 19 empty)
+├────────┼────────┼────────┼────────┤
+│Neut 0  │Neut 1  │Neut 2  │ (23)   │  Frames 20-22: Neutral expression (frame 23 empty)
+├────────┼────────┼────────┼────────┤
+│Conc 0  │Conc 1  │Conc 2  │ (27)   │  Frames 24-26: Concerned expression (frame 27 empty)
 └────────┴────────┴────────┴────────┘
+
+Note: Frame numbers in parentheses (19, 23, 27) are empty spaces in the grid.
+The extension only uses 3 frames per expression animation.
 ```
 
 ### Animation Types
@@ -58,21 +67,41 @@ Frame Layout (4x4 grid for 64x64 frames = 256x256 total image):
    - Can be more expressive (jumping, waving, spinning)
    - Plays once then returns to idle
 
+5. **Happy Expression** (Frames 16-18)
+   - Displayed when pet provides positive commentary
+   - Shows excitement, joy, or approval
+   - Examples: bouncing, smiling, sparkling
+   - Loops while speech bubble is visible
+
+6. **Neutral Expression** (Frames 19-21)
+   - Displayed for neutral or observational commentary
+   - Shows calm, thoughtful, or curious demeanor
+   - Examples: thinking pose, gentle movement
+   - Loops while speech bubble is visible
+
+7. **Concerned Expression** (Frames 22-24)
+   - Displayed when pet identifies potential issues
+   - Shows worry, confusion, or caution
+   - Examples: head tilt, worried look, cautious stance
+   - Loops while speech bubble is visible
+
 ## Creating Your Sprite Sheet
 
 ### Step 1: Design Your Frames
 
-1. Create 16 individual frames at 64x64 pixels each
+1. Create 25 individual frames at 64x64 pixels each (frames 0-24)
 2. Use transparent backgrounds (alpha channel)
 3. Keep the character centered in each frame
 4. Ensure smooth transitions between frames
+5. Design expression frames to clearly convey emotion
 
 ### Step 2: Arrange Frames in Grid
 
-1. Create a new image: 256x256 pixels (for 64x64 frames)
-2. Arrange frames in a 4x4 grid as shown above
+1. Create a new image: 256x448 pixels (for 64x64 frames in 4x7 grid)
+2. Arrange frames in a 4x7 grid as shown above
 3. Frames should be placed left-to-right, top-to-bottom
 4. No spacing or padding between frames
+5. Leave the last frame position in rows 5-7 empty (only 3 frames per expression)
 
 ### Step 3: Export as PNG
 
@@ -114,6 +143,9 @@ If you want to use different frame dimensions:
   walkLeftFrames: [4, 5, 6, 7],       // Frames for walking left
   walkRightFrames: [8, 9, 10, 11],    // Frames for walking right
   interactionFrames: [12, 13, 14, 15], // Frames for interaction
+  happyExpressionFrames: [16, 17, 18], // Frames for happy expression (row 4, cols 0-2)
+  neutralExpressionFrames: [20, 21, 22], // Frames for neutral expression (row 5, cols 0-2)
+  concernedExpressionFrames: [24, 25, 26], // Frames for concerned expression (row 6, cols 0-2)
   frameDuration: 150     // Milliseconds per frame
 }
 ```

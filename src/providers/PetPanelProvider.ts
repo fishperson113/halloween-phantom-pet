@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { PetType } from '../models/PetType.js';
+import { ExpressionType } from '../models/ExpressionType.js';
 import { getSpriteConfig } from '../sprites/index.js';
 
 /**
@@ -124,6 +125,23 @@ export class PetPanelProvider implements vscode.WebviewViewProvider {
         });
       } catch (error) {
         console.error('[PetPanelProvider] Failed to send showSpeechBubble message:', error);
+      }
+    }
+  }
+
+  /**
+   * Display a speech bubble with commentary and expression animation
+   */
+  public showSpeechBubbleWithExpression(message: string, expression: ExpressionType): void {
+    if (this._view) {
+      try {
+        this._view.webview.postMessage({
+          type: 'showSpeechBubbleWithExpression',
+          message: message,
+          expression: expression
+        });
+      } catch (error) {
+        console.error('[PetPanelProvider] Failed to send showSpeechBubbleWithExpression message:', error);
       }
     }
   }

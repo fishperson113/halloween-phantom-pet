@@ -17,6 +17,10 @@ export class CommentaryScheduler {
   private cumulativeCharacterCount: number = 0;
   private textChangeDisposable?: vscode.Disposable;
   private activeEditorDisposable?: vscode.Disposable;
+  
+  // Track characters typed while speech bubble is visible
+  private isSpeechBubbleVisible: boolean = false;
+  private charactersSinceBubbleShown: number = 0;
 
   constructor(
     configManager: ConfigurationManager,
@@ -49,6 +53,10 @@ export class CommentaryScheduler {
       // Reset character count when switching editors
       if (editor) {
         this.cumulativeCharacterCount = 0;
+        // Dismiss speech bubble when switching editors
+        if (this.isSpeechBubbleVisible) {
+          this.dismissSpeechBubble();
+        }
       }
     });
   }
@@ -106,6 +114,15 @@ export class CommentaryScheduler {
   }
 
   /**
+   * Dismiss the speech bubble and resume normal pet behavior
+   */
+  private dismissSpeechBubble(): void {
+    this.petPanelProvider.hideSpeechBubble();
+    this.isSpeechBubbleVisible = false;
+    this.charactersSinceBubbleShown = 0;
+  }
+
+  /**
    * Get the current cumulative character count (for testing)
    */
   getCharacterCount(): number {
@@ -145,6 +162,19 @@ export class CommentaryScheduler {
 
       // Update cumulative count
       this.cumulativeCharacterCount += charactersAdded;
+      
+      // If speech bubble is visible, track characters for auto-dismiss
+      if (this.isSpeechBubbleVisible) {
+        this.charactersSinceBubbleShown += charactersAdded;
+        
+        // Auto-dismiss after 5% of the threshold
+        const threshold = this.configManager.getCommentaryFrequency();
+        const dismissThreshold = Math.max(10, Math.floor(threshold * 0.05)); // At least 10 characters
+        
+        if (this.charactersSinceBubbleShown >= dismissThreshold) {
+          this.dismissSpeechBubble();
+        }
+      }
 
       // Check if threshold is reached
       const threshold = this.configManager.getCommentaryFrequency();
@@ -188,13 +218,17 @@ export class CommentaryScheduler {
       const personality = customPrompt || PERSONALITIES[currentPet].systemPrompt;
 
       // Generate commentary
-      const commentary = await this.llmService.generateCommentary(codeContext, personality);
+      const response = await this.llmService.generateCommentary(codeContext, personality);
 
       // Hide processing indicator
       this.petPanelProvider.hideProcessingIndicator();
 
-      // Display the commentary in a speech bubble
-      this.petPanelProvider.showSpeechBubble(commentary);
+      // Display the commentary in a speech bubble with expression
+      this.petPanelProvider.showSpeechBubbleWithExpression(response.commentary, response.expression);
+      
+      // Track that speech bubble is now visible
+      this.isSpeechBubbleVisible = true;
+      this.charactersSinceBubbleShown = 0;
     } catch (error) {
       // Hide processing indicator on error
       this.petPanelProvider.hideProcessingIndicator();

@@ -232,7 +232,16 @@ interface PetConfig {
   walkLeftFrames: number[]
   walkRightFrames: number[]
   interactionFrames: number[]
+  happyExpressionFrames: number[]  // NEW: 2-3 frames for happy expression
+  neutralExpressionFrames: number[]  // NEW: 2-3 frames for neutral expression
+  concernedExpressionFrames: number[]  // NEW: 2-3 frames for concerned expression
   frameDuration: number  // milliseconds per frame
+}
+
+enum ExpressionType {
+  Happy = 'happy',
+  Neutral = 'neutral',
+  Concerned = 'concerned'
 }
 ```
 
@@ -268,6 +277,13 @@ interface CommentaryResponse {
   success: boolean
   error?: string
 }
+
+// NEW: Structured LLM Response
+interface StructuredCommentaryResponse {
+  commentary: string  // The text to display in the speech bubble
+  expression: ExpressionType  // Which expression animation to show
+  sentiment?: number  // Optional: -1 to 1 scale for fine-grained sentiment
+}
 ```
 
 ### Extension Settings
@@ -284,6 +300,157 @@ interface ExtensionSettings {
   'spookyPets.contextLines': number  // Lines of code to include
 }
 ```
+
+## Expressive Reactions Feature
+
+### Overview
+
+The expressive reactions feature enhances pet engagement by having them display emotional reactions based on code quality assessment. When providing commentary, pets will pause their movement, display an appropriate expression animation (happy, neutral, or concerned), and show a speech bubble with their thoughts.
+
+### Design Approach
+
+**Structured LLM Responses:**
+- Use JSON schema validation (via Zod library) to ensure LLM responses follow a predictable structure
+- Request LLM to return both commentary text and an expression indicator
+- Validate responses and fall back to neutral expression if parsing fails
+
+**Expression Animations:**
+- Add 2-3 frame animation sequences for each expression type to sprite sheets
+- Happy: Bouncing, excited, or smiling animation
+- Neutral: Calm, observant, or thinking animation  
+- Concerned: Worried, confused, or cautious animation
+
+**Animation State Management:**
+- When commentary is triggered, pause normal movement/idle behavior
+- Play the appropriate expression animation on loop while speech bubble is visible
+- Resume normal behavior when speech bubble is dismissed
+
+### Implementation Details
+
+**LLM Service Changes:**
+
+```typescript
+// Add Zod schema for response validation
+import { z } from 'zod';
+
+const CommentaryResponseSchema = z.object({
+  commentary: z.string().min(1).max(200),
+  expression: z.enum(['happy', 'neutral', 'concerned'])
+});
+
+// Update LLM prompt to request structured output
+const systemPrompt = `${personality}
+
+IMPORTANT: You must respond with valid JSON in this exact format:
+{
+  "commentary": "Your 1-2 sentence comment here",
+  "expression": "happy" | "neutral" | "concerned"
+}
+
+Expression guidelines:
+- "happy": Use when code is well-written, elegant, or shows good practices
+- "neutral": Use for observations, questions, or neutral commentary
+- "concerned": Use when spotting potential bugs, code smells, or areas for improvement`;
+
+// Parse and validate response
+function parseStructuredResponse(rawResponse: string): StructuredCommentaryResponse {
+  try {
+    const parsed = JSON.parse(rawResponse);
+    const validated = CommentaryResponseSchema.parse(parsed);
+    return validated;
+  } catch (error) {
+    console.warn('[LLMService] Failed to parse structured response, using fallback');
+    return {
+      commentary: rawResponse,
+      expression: 'neutral'
+    };
+  }
+}
+```
+
+**Pet Panel Provider Changes:**
+
+```typescript
+// Update showSpeechBubble to accept expression
+showSpeechBubbleWithExpression(message: string, expression: ExpressionType): void {
+  if (this._view) {
+    this._view.webview.postMessage({
+      type: 'showSpeechBubbleWithExpression',
+      message: message,
+      expression: expression
+    });
+  }
+}
+```
+
+**Webview Animation Manager Changes:**
+
+```typescript
+// Add expression animation state
+this.isShowingExpression = false;
+this.currentExpression = null;
+
+// Handle new message type
+case 'showSpeechBubbleWithExpression':
+  this.showSpeechBubbleWithExpression(message.message, message.expression);
+  break;
+
+// New method to show speech bubble with expression
+showSpeechBubbleWithExpression(text, expression) {
+  // Pause normal behavior
+  this.isShowingExpression = true;
+  this.currentExpression = expression;
+  
+  // Switch to expression animation
+  this.currentAnimation = `${expression}Expression`;
+  this.currentFrameIndex = 0;
+  
+  // Show speech bubble
+  this.speechBubbleContent.textContent = text;
+  this.speechBubble.classList.remove('hidden');
+}
+
+// Update hideSpeechBubble to resume normal behavior
+hideSpeechBubble() {
+  this.speechBubble.classList.add('hidden');
+  this.speechBubbleContent.textContent = '';
+  
+  // Resume normal behavior
+  this.isShowingExpression = false;
+  this.currentExpression = null;
+  this.currentAnimation = 'idle';
+  this.currentFrameIndex = 0;
+}
+
+// Update animation logic to handle expression state
+animate(currentTime) {
+  // ... existing code ...
+  
+  // Don't change behavior or move if showing expression
+  if (!this.isShowingExpression) {
+    this.updatePosition();
+    if (currentTime >= this.nextBehaviorChange) {
+      this.changeBehavior(currentTime);
+    }
+  }
+  
+  // ... rest of animation code ...
+}
+```
+
+**Sprite Sheet Updates:**
+
+Each pet sprite sheet will need to be extended with expression frames:
+- Frames 16-18: Happy expression (3 frames)
+- Frames 19-21: Neutral expression (3 frames)
+- Frames 22-24: Concerned expression (3 frames)
+
+### Fallback Behavior
+
+- If LLM response is not valid JSON, extract text and use neutral expression
+- If expression field is missing or invalid, default to neutral
+- If expression frames are missing from sprite sheet, use idle frames
+- Log warnings for debugging but never crash
 
 ## Correctness Properties
 
@@ -385,6 +552,22 @@ interface ExtensionSettings {
 ### Property 24: Error logging
 *For any* error that occurs during extension operation, diagnostic information should be logged for troubleshooting.
 **Validates: Requirements 8.5**
+
+### Property 25: Structured response parsing
+*For any* LLM response, the extension should attempt to parse it as a structured JSON response containing commentary and expression fields, and fall back to neutral expression if parsing fails.
+**Validates: Requirements 9.1, 9.7**
+
+### Property 26: Expression animation mapping
+*For any* valid expression indicator (happy, neutral, concerned) in the LLM response, the pet should display the corresponding expression animation.
+**Validates: Requirements 9.2, 9.3, 9.4**
+
+### Property 27: Movement pause during commentary
+*For any* pet displaying commentary with a speech bubble, the pet's movement and behavior change animations should be paused until the speech bubble is dismissed.
+**Validates: Requirements 9.5**
+
+### Property 28: Behavior resumption after commentary
+*For any* pet that was displaying commentary, when the speech bubble is hidden, the pet should return to its normal idle and movement behavior.
+**Validates: Requirements 9.6**
 
 ## Error Handling
 
