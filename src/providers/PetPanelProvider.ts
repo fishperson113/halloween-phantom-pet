@@ -208,7 +208,7 @@ export class PetPanelProvider implements vscode.WebviewViewProvider {
       vscode.Uri.joinPath(this._extensionUri, 'out', 'webview', 'petView.js')
     );
     const styleUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, 'src', 'webview', 'petView.css')
+      vscode.Uri.joinPath(this._extensionUri, 'out', 'webview', 'petView.css')
     );
 
     // Generate a nonce for CSP

@@ -1,11 +1,83 @@
-.vscode/**
-.vscode-test/**
+#########################################
+# 1. Source files (we only ship /out)
+#########################################
 src/**
+**/*.ts
+tsconfig.json
+
+# Do NOT ignore compiled JS in out/
+!out/**/*.js
+!out/**/*.css
+!out/**/*.html
+
+
+#########################################
+# 2. Tests (exclude everything test-related)
+#########################################
+test/**
+**/*.test.js
+**/*.test.ts
+.vscode-test/**
+.vscode-test-user-data/**
+.vscode-test.mjs
+
+
+#########################################
+# 3. Development configs
+#########################################
+.vscode/**
+.eslintrc*
+eslint.config.mjs
+.git/**
+.github/**
 .gitignore
 .yarnrc
+
+
+#########################################
+# 4. Documentation (keep only README.md)
+#########################################
 vsc-extension-quickstart.md
-**/tsconfig.json
-**/eslint.config.mjs
+CHANGELOG.md
+SPRITE_GUIDE.md
+
+
+#########################################
+# 5. Build artifacts (exclude maps & local VSIX)
+#########################################
 **/*.map
-**/*.ts
-**/.vscode-test.*
+*.vsix
+
+
+#########################################
+# 6. Sprite + asset cleanup
+# Keep only files actually used at runtime
+#########################################
+
+# Remove dev files inside resources/sprites
+resources/sprites/README.md
+resources/sprites/SPRITE_TEMPLATE.md
+resources/sprites/.gitkeep
+
+# Keep ONLY actual image assets
+#!resources/sprites/**
+
+
+#########################################
+# 7. AI Agent + Workspace junk
+#########################################
+.kiro/**
+.DS_Store
+*.log
+
+
+#########################################
+# 8. Node modules
+# vsce will automatically pack ONLY prod dependencies.
+#########################################
+node_modules/@types/**
+node_modules/typescript/**
+node_modules/vscode/**
+node_modules/mocha/**
+node_modules/eslint/**
+node_modules/typescript-eslint/**

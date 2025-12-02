@@ -1,14 +1,32 @@
 {
   "name": "halloween-phantom-pet",
-  "displayName": "halloween-phantom-pet",
-  "description": "This is the part of VSCode ThemePackage",
+  "displayName": "Spooky Code Pets",
+  "description": "Animated spooky companions that provide AI-powered code commentary with personality",
   "version": "0.0.1",
+  "publisher": "fishperson113",
   "engines": {
     "vscode": "^1.103.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Visualization"
   ],
+  "keywords": [
+    "pet",
+    "companion",
+    "ai",
+    "halloween",
+    "animation",
+    "code-commentary",
+    "spooky",
+    "ghost",
+    "pumpkin",
+    "skeleton"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fishperson113/halloween-phantom-pet.git"
+  },
   "activationEvents": [
     "onStartupFinished"
   ],
