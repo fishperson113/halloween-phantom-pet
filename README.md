@@ -1,16 +1,3 @@
-# Spooky Code Pets
-
-An interactive VS Code extension that brings spooky animated companions to your coding experience! Choose from a pumpkin, skeleton, or ghost that will periodically review your code and provide LLM-powered commentary with personality.
-
-## Features
-
-- **Animated Spooky Pets**: Display animated pets (pumpkin, skeleton, ghost) in your VS Code Explorer sidebar
-- **AI-Powered Commentary**: Pets analyze your code and provide helpful or entertaining observations using LLM
-- **Unique Personalities**: Each pet has its own distinct personality and commentary style
-- **Custom Sprites**: Support for user-provided sprite sheets to customize pet appearances
-- **Configurable Frequency**: Control how often pets comment on your code
-- **Secure API Key Storage**: API keys stored securely using VS Code's secrets API
-- **Interactive Animations**: Click on pets to trigger special interaction animations
 
 ## Custom Sprite Sheets
 
@@ -18,7 +5,7 @@ The extension supports custom sprite sheets! You can create your own animated pe
 
 ### Quick Start with Custom Sprites
 
-1. Create a 256x256 PNG file with 16 frames (64x64 each) arranged in a 4x4 grid
+1. Create a 256x448 PNG file with 25 frames (64x64 each) arranged in a 4x7 grid
 2. Name it `pumpkin-sprites.png`, `skeleton-sprites.png`, or `ghost-sprites.png`
 3. Place it in the `resources/sprites/` directory
 4. Reload VS Code
@@ -27,13 +14,16 @@ For detailed instructions, see **[SPRITE_GUIDE.md](SPRITE_GUIDE.md)**
 
 ### Sprite Sheet Format
 
-- **16 frames** in a 4x4 grid layout
-- **64x64 pixels per frame** (256x256 total)
+- **25 frames** in a 4x7 grid layout (only 3 frames per expression row)
+- **64x64 pixels per frame** (256x448 total)
 - **Transparent background** (PNG with alpha channel)
 - Frames 0-3: Idle animation
 - Frames 4-7: Walk left animation
 - Frames 8-11: Walk right animation
 - Frames 12-15: Interaction animation
+- Frames 16-18: Happy expression (frame 19 empty)
+- Frames 20-22: Neutral expression (frame 23 empty)
+- Frames 24-26: Concerned expression (frame 27 empty)
 
 ## Requirements
 
@@ -74,44 +64,79 @@ This extension contributes the following settings:
 * `Spooky Pets: Select Pet` - Choose which pet to display
 * `Spooky Pets: Trigger Commentary Now` - Manually trigger pet commentary
 
+## How It Works
+
+### Expressive Reactions
+
+When your pet provides commentary, it displays an emotional expression based on the code quality:
+
+- **Happy Expression** 😊: Well-written code, good practices, elegant solutions
+- **Neutral Expression** 😐: General observations, questions, neutral commentary
+- **Concerned Expression** 😟: Potential bugs, code smells, areas for improvement
+
+### Speech Bubble Behavior
+
+Speech bubbles can be dismissed in two ways:
+1. **Click the pet** to immediately dismiss the commentary
+2. **Keep typing** and the bubble auto-dismisses after 5% of your commentary frequency threshold
+
+This ensures pets don't stay frozen in expression animations indefinitely!
+
 ## Known Issues
 
+- Sprite images may not load if custom PNG files aren't provided (extension shows emoji fallbacks: 🎃💀👻)
+- First commentary request may take longer due to LLM API cold start
+- Rate limiting may occur with very frequent typing (handled gracefully with retry logic)
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+### 0.1.0 - Initial Release
 
-### 1.0.0
+**Features:**
+- Animated spooky pets (pumpkin, skeleton, ghost) in sidebar
+- AI-powered code commentary with LLM integration
+- Expressive reactions based on code quality
+- Auto-dismiss speech bubbles (click or type to dismiss)
+- Three unique pet personalities
+- Configurable commentary frequency
+- Secure API key storage
+- Custom sprite sheet support
 
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+**Technical:**
+- Built with TypeScript and VS Code Extension API
+- Uses Zod for structured LLM response validation
+- Implements property-based testing with fast-check
+- Supports OpenAI-compatible API endpoints
 
 ---
 
-## Following extension guidelines
+## Development
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+This extension was built using **Kiro's Spec-Driven Development** workflow. See the `.kiro/specs/` directory for the complete specification including requirements, design, and implementation tasks.
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+### Project Structure
 
-## Working with Markdown
+```
+halloween-phantom-pet/
+├── src/
+│   ├── extension.ts          # Extension entry point
+│   ├── models/                # Data models and interfaces
+│   ├── services/              # LLM, configuration, scheduler
+│   ├── providers/             # Pet panel webview provider
+│   ├── personalities/         # Pet personality definitions
+│   ├── sprites/               # Sprite configurations
+│   ├── webview/               # HTML/CSS/JS for pet display
+│   └── test/                  # Unit and property-based tests
+├── resources/
+│   └── sprites/               # Sprite PNG files
+└── .kiro/specs/               # Specification documents
+```
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+## Installation
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+See [INSTALLATION.md](INSTALLATION.md) for detailed installation instructions.
 
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+For quick testing, see [QUICK_START.md](QUICK_START.md).
 
 Attribution:
 
